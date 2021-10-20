@@ -93,7 +93,7 @@ const UserGet = async (req, res) => {
     console.log(user_id)
     // const user = await User.findOne({ where: { id: user_id } }).populate(
     //   "address"
-    // );
+    // )
     const user = await User.findOne(
       { where: { id: user_id } },
       { include: [{model:address,
