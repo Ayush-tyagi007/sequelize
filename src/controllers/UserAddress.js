@@ -12,26 +12,18 @@ const UserAddress = async (req, res) => {
       pin_code: req.body.pin,
     };
     const createdAddress = await address.create(data);
-    // const updatedUser = await User.findOneAndUpdate(
-    //   { _id: user_id },
-    //   { $push: { address: createdAddress._id } }
-    // );
     res.send(response("address created", 0, createdAddress));
   } catch (er) {
-    console.log(er)
     res.send(response(er.message || "an error generated in try block", 1));
   }
 };
 const UserAddressDelete = async (req, res) => {
   try {
-    const user_id = req.user_id;
     const addressid = req.headers.addressid;
-    await User.findOneAndUpdate(
-      { _id: user_id },
-      { $pull: { address: addressid } }
-    );
-    const deletedaddress = await address.deleteOne({
-      _id: req.headers.addressid,
+    const deletedaddress = await address.destroy({
+      where: {
+        id: req.headers.addressid,
+      },
     });
     res.send(response("address deleted", 0));
   } catch (er) {

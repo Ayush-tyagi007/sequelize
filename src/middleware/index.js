@@ -1,4 +1,4 @@
 const auth = require("./authentication");
 const expiryValidator = require("./expiryValidator");
-const resetTokenVerifier=require("./resettokenverifier")
-module.exports = { auth, expiryValidator,resetTokenVerifier };
+const resetTokenVerifier = require("./resettokenverifier");
+module.exports = { auth, expiryValidator, resetTokenVerifier };

@@ -8,7 +8,7 @@ const fileupload = require("express-fileupload");
 router.use(fileupload({ useTempFiles: true }));
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "/home/etech/Desktop/express3/upload");
+    cb(null, "./upload/");
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);

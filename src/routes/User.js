@@ -1,8 +1,8 @@
 const express = require("express");
 const { UserController } = require("../controllers");
-const { auth, expiryValidator,resetTokenVerifier } = require("../middleware");
+const { auth, expiryValidator, resetTokenVerifier } = require("../middleware");
 const router = express.Router();
-router.post("/register",auth, UserController.Register);
+router.post("/register", auth, UserController.Register);
 router.post("/login", UserController.Login);
 router.get("/get", expiryValidator, UserController.UserGet);
 router.get("/get/:id", expiryValidator, UserController.UserGetId);

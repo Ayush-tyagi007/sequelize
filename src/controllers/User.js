@@ -6,7 +6,6 @@ const { sendMail, response } = require("../utilities");
 const Login = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
-    console.log(user.id);
     if (user) {
       const givenPassword = md5(req.body.password);
       if (user.password == givenPassword) {
@@ -21,7 +20,6 @@ const Login = async (req, res) => {
           ),
         };
         const accessToken = await access_token.create(data);
-        console.log(accessToken)
         res.send(response("user token", 0, accessToken.token));
       } else {
         res.send(response("password not matched", 1));
@@ -43,9 +41,6 @@ const Register = async (req, res) => {
         lastName: req.body.lastName,
         password: md5(req.body.password),
       };
-      //  const deleteduser= await User.destroy({ where: { username: "ayush124" } })
-      //     .then(res.send("users deleted"))
-      //     .catch(res.send("not deleted"));
       const user = await User.create(data);
       console.log("user created");
       const mailData = {
@@ -53,7 +48,6 @@ const Register = async (req, res) => {
         about: "confirmation mail",
         msg: "user registered",
       };
-      console.log(mailData);
       await sendMail(mailData);
       res.send(response("usercreated and mail sent", 0));
     } else {
@@ -68,7 +62,7 @@ const UserDelete = async (req, res) => {
     const user_id = req.user_id;
     await User.destroy({ where: { id: user_id } });
     const AddressDeleted = await address.destroy({
-      where: { user_id: user_id },
+      where: { UserId: user_id },
     });
     await access_token.destroy({ where: { user_id: user_id } });
     if (AddressDeleted != 0) {
@@ -85,21 +79,13 @@ const UserDelete = async (req, res) => {
     res.send(response(er.message || "an error generated in try block", 1));
   }
 };
-
-//working on it
 const UserGet = async (req, res) => {
   try {
     const user_id = req.user_id;
-    console.log(user_id)
-    // const user = await User.findOne({ where: { id: user_id } }).populate(
-    //   "address"
-    // )
-    const user = await User.findOne(
-      { where: { id: user_id } },
-      { include: [{model:address,
-        as:"address"}] },
-
-    );
+    const user = await User.findOne({
+      where: { id: user_id },
+      include: [{ model: address, as: "address" }],
+    });
     if (user) {
       res.send(response("user ", 0, user));
     } else {
@@ -109,10 +95,12 @@ const UserGet = async (req, res) => {
     res.send(response(er.message || "an error generated in try block", 1));
   }
 };
-//working on it
 const UserGetId = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id }).populate("address");
+    const user = await User.findOne({
+      where: { id: req.params.id },
+      include: [{ model: address, as: "address" }],
+    });
     if (user) {
       res.send(response("user", 0, user));
     } else {
@@ -140,7 +128,6 @@ const UserList = async (req, res) => {
 const forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
-    console.log(user);
     if (user) {
       const tokenData = {
         user_id: user.id,
@@ -173,19 +160,6 @@ const passwordReset = async (req, res) => {
     const user_id = req.user_id;
     const accessTokenId = req.accessTokenId;
     const newPassword = md5(req.body.password);
-    const ab = md5(req.body.conf_password);
-    console.log(newPassword);
-    console.log(ab);
-    // await User.findOne({ id: user_id }).then((user) => {
-    //   user.update({ password: newPassword }, { where: { id: user_id } });
-    //   var mailData = {
-    //     email: user.email,
-    //     about: "Confirmation Mail",
-    //     msg: "password changed successfully",
-    //   };
-    //  await sendMail(mailData)
-    // });
-
     await User.update(
       {
         password: newPassword,
@@ -212,8 +186,7 @@ const passwordReset = async (req, res) => {
     await sendMail(mailData);
     res.send(response("password changed", 0));
   } catch (er) {
-    // console.log(er);
-    // res.send(response(er.message || "an error generated in try block", 1));
+    res.send(response(er.message || "an error generated in try block", 1));
   }
 };
 module.exports = {

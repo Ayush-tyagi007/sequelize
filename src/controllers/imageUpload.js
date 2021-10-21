@@ -6,7 +6,7 @@ const imageUploadLocally = async (req, res) => {
   try {
     const user_id = req.user_id;
     const data = {
-      image: req.file.originalname,
+      image: req.files.image.name,
       user_id: user_id,
     };
     const imageData = await image.create(data);

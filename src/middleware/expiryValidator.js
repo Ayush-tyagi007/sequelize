@@ -4,9 +4,9 @@ const jwt = require("jsonwebtoken");
 async function expiryValidator(req, res, next) {
   try {
     jwt.verify(req.headers.access, "secret");
-    const token = await access_token.findOne({ token: req.headers.access });
-    console.log(token.user_id)
-    console.log(token)
+    const token = await access_token.findOne({
+      where: { token: req.headers.access },
+    });
     if (token) {
       req.user_id = token.user_id;
       next();
